@@ -221,9 +221,14 @@ public class ArticleController {
     @GetMapping("/search")
     public String searchArticles(@RequestParam("query") String query, Model model) {
         List<Article> articles = articleService.searchArticles(query);
+        List<Author> authors = authorService.getAllAuthors();  // Получаем всех авторов
+        List<Tag> tags = tagService.getAllTags();  // Получаем все теги
+
         model.addAttribute("articles", articles);
-        model.addAttribute("searchQuery", query);  // добавим запрос для отображения на странице
-        return "articles/search";  // Возвращаем шаблон для отображения результатов поиска
+        model.addAttribute("authors", authors);  // Передаем авторов в шаблон
+        model.addAttribute("tags", tags);  // Передаем теги в шаблон
+        model.addAttribute("searchQuery", query);  // Передаем запрос в шаблон
+        return "articles/list";  // Перенаправляем на страницу списка статей
     }
 
     // Показать статьи по автору
@@ -231,6 +236,15 @@ public class ArticleController {
     public String getArticlesByAuthor(@PathVariable Long authorId, Model model) {
         List<Article> articles = articleService.getArticlesByAuthor(authorId);
         model.addAttribute("articles", articles);
+
+        // Добавляем текущего пользователя в модель
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = null;
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            currentUser = userRepository.findByUsername(auth.getName());
+        }
+        model.addAttribute("currentUser", currentUser);
+
         return "articles/list"; // Этот шаблон будет отображать список статей
     }
 
@@ -239,6 +253,15 @@ public class ArticleController {
     public String getArticlesByTag(@PathVariable Long tagId, Model model) {
         List<Article> articles = articleService.getArticlesByTag(tagId);
         model.addAttribute("articles", articles);
+
+        // Добавляем текущего пользователя в модель
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = null;
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            currentUser = userRepository.findByUsername(auth.getName());
+        }
+        model.addAttribute("currentUser", currentUser);
+
         return "articles/list"; // Этот шаблон будет отображать список статей
     }
 }

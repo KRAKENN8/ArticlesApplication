@@ -50,51 +50,46 @@
         </div>
     </form>
 
-    <!-- Результаты отображаются только если был введён запрос -->
-    <div class="mt-4" th:if="${searchQuery != null and !#strings.isEmpty(searchQuery)}">
-        <h3>Результаты поиска:</h3>
-        <div th:if="${#lists.isEmpty(articles)}">
-            <p>Статьи не найдены.</p>
-        </div>
-    </div>
-</div>
-
-<!-- Основной контент страницы (Все статьи) -->
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Список статей</h2>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <!-- Каждая статья отображается в виде карточки -->
-        <div th:each="article : ${articles}" class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${article.title}">Заголовок</h5>
-                    <h6 class="card-subtitle mb-2 text-muted" th:text="${article.author.name}">Автор</h6>
-                    <p class="card-text" th:text="${article.description}">Описание</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">
-                        Теги:
-                        <span th:each="tag, iterStat : ${article.tags}"
-                              th:text="${tag.name + (iterStat.last ? '' : ', ')}"></span>
-                    </small>
-                    <br>
-                    <small class="text-muted" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
-                    <div class="mt-2">
-                        <a th:href="@{/articles/{id}(id=${article.id})}" class="btn btn-info btn-sm">Детали</a>
-                        <!-- Кнопки редактирования/удаления отображаются, если currentUser не null и
-                             либо является владельцем статьи, либо имеет роль ADMIN -->
-                        <span th:if="${currentUser != null and ((article.owner != null and article.owner.username == currentUser.username) or (currentUser.role.toString() == 'ADMIN_ROLE'))}">
-                            <a th:href="@{/articles/edit/{id}(id=${article.id})}" class="btn btn-warning btn-sm">Редактировать</a>
-                            <a th:href="@{/articles/delete/{id}(id=${article.id})}" class="btn btn-danger btn-sm"
-                               onclick="return confirm('Вы уверены, что хотите удалить статью?')">Удалить</a>
-                        </span>
+    <!-- Основной контент страницы (Все статьи) -->
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Список статей</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <!-- Каждая статья отображается в виде карточки -->
+            <div th:each="article : ${articles}" class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${article.title}">Заголовок</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <a th:href="@{/articles/by-author/{authorId}(authorId=${article.author.id})}" th:text="${article.author.name}">Автор</a>
+                        </h6>
+                        <p class="card-text" th:text="${article.description}">Описание</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            Теги:
+                            <span th:each="tag, iterStat : ${article.tags}">
+                                    <a th:href="@{/articles/by-tag/{tagId}(tagId=${tag.id})}" th:text="${tag.name + (iterStat.last ? '' : ', ')}"></a>
+                                </span>
+                        </small>
+                        <br>
+                        <small class="text-muted" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+                        <div class="mt-2">
+                            <a th:href="@{/articles/{id}(id=${article.id})}" class="btn btn-info btn-sm">Детали</a>
+                            <!-- Кнопки редактирования/удаления отображаются, если currentUser не null и
+                                 либо является владельцем статьи, либо имеет роль ADMIN -->
+                            <span th:if="${currentUser != null and ((article.owner != null and article.owner.username == currentUser.username) or (currentUser.role.toString() == 'ADMIN_ROLE'))}">
+                                    <a th:href="@{/articles/edit/{id}(id=${article.id})}" class="btn btn-warning btn-sm">Редактировать</a>
+                                    <a th:href="@{/articles/delete/{id}(id=${article.id})}" class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Вы уверены, что хотите удалить статью?')">Удалить</a>
+                                </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="text-center mt-3">
-        <a href="/articles/new" class="btn btn-success">Добавить новую статью</a>
+        <div class="text-center mt-3">
+            <a href="/articles/new" class="btn btn-success">Добавить новую статью</a>
+        </div>
     </div>
 </div>
 
