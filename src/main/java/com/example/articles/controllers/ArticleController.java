@@ -59,7 +59,6 @@ public class ArticleController {
         return "articles/list";
     }
 
-
     // Отображение деталей статьи
     @GetMapping("/{id}")
     public String articleDetails(@PathVariable Long id, Model model) {
@@ -148,6 +147,7 @@ public class ArticleController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User currentUser = userRepository.findByUsername(username);
+        
         if (!currentUser.getRole().equals(User.Roles.ADMIN_ROLE) &&
                 (existingArticle.getOwner() == null || !existingArticle.getOwner().getId().equals(currentUser.getId()))) {
             return "redirect:/access-denied";
