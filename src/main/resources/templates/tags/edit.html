@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Редактировать тег</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Articles</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/articles">Статьи</a>
+        </li>
+        <!-- Вкладка "Пользователи" только для администраторов -->
+        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+          <a class="nav-link" href="/users">Пользователи</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/tags">Теги</a>
+        </li>
+      </ul>
+      <form th:action="@{/logout}" method="post" class="d-flex">
+        <button type="submit" class="btn btn-outline-danger">Выйти</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h2 class="text-center mb-4">Редактировать тег</h2>
+    <form th:action="@{'/tags/update/' + ${tag.id}}" method="post">
+      <div class="mb-3">
+        <label for="name" class="form-label">Название тега:</label>
+        <input type="text" id="name" name="name" class="form-control" th:value="${tag.name}" required />
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary w-100">Сохранить изменения</button>
+      </div>
+    </form>
+    <div class="text-center mt-3">
+      <a href="/tags" class="btn btn-outline-secondary">Назад к списку тегов</a>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

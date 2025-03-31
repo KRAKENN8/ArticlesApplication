@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Детали статьи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<!-- Навигационная панель -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Articles</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/articles">Статьи</a>
+                </li>
+                <!-- Вкладка "Пользователи" только для администраторов -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" href="/users">Пользователи</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tags">Теги</a>
+                </li>
+            </ul>
+
+            <!-- Кнопка для авторизованных и неавторизованных пользователей -->
+            <div class="d-flex">
+                <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+                    <button type="submit" class="btn btn-outline-danger">Выйти</button>
+                </form>
+                <a th:href="@{/login}" sec:authorize="!isAuthenticated()" class="btn btn-outline-primary ms-2">Войти</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контент страницы -->
+<div class="container mt-5">
+    <div class="card shadow p-4 mb-4">
+        <h2 class="text-center mb-4">Детали статьи</h2>
+
+        <p><strong>ID:</strong> <span th:text="${article.id}"></span></p>
+        <p><strong>Заголовок:</strong> <span th:text="${article.title}"></span></p>
+        <p><strong>Описание:</strong> <span th:text="${article.description}"></span></p>
+        <p><strong>Содержимое:</strong></p>
+        <p th:text="${article.body}"></p>
+
+        <!-- Заменили на владельца -->
+        <p><strong>Владелец:</strong> <span th:text="${article.owner.username}"></span></p>
+
+        <p>
+            <strong>Дата создания:</strong>
+            <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+        </p>
+        <p>
+            <strong>Дата обновления:</strong>
+            <span th:text="${#temporals.format(article.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
+        </p>
+
+        <p><strong>Теги:</strong></p>
+        <ul>
+            <li th:each="tag : ${article.tags}" th:text="${tag.name}"></li>
+        </ul>
+
+        <div class="d-flex justify-content-between mt-3">
+            <a th:if="${currentUser != null and ((article.owner != null and article.owner.username == currentUser.username)
+        or (currentUser.role == T(com.example.articles.entities.User.Roles).ADMIN_ROLE))}"
+               th:href="@{/articles/edit/{id}(id=${article.id})}" class="btn btn-warning">Редактировать</a>
+            <a th:if="${currentUser != null and ((article.owner != null and article.owner.username == currentUser.username)
+        or (currentUser.role == T(com.example.articles.entities.User.Roles).ADMIN_ROLE))}"
+               th:href="@{/articles/delete/{id}(id=${article.id})}" class="btn btn-danger"
+               onclick="return confirm('Вы уверены, что хотите удалить статью?')">Удалить</a>
+            <a href="/articles" class="btn btn-outline-secondary">Назад к списку статей</a>
+        </div>
+    </div>
+
+    <!-- Раздел комментариев -->
+    <div class="card shadow p-4">
+        <h3 class="mb-3">Комментарии</h3>
+        <div th:if="${article.comments != null and article.comments.size() > 0}">
+            <ul class="list-group mb-3">
+                <li class="list-group-item" th:each="comment : ${article.comments}">
+                    <p th:text="${comment.body}"></p>
+                    <small class="text-muted">
+                        <span th:text="${comment.user.username}"></span> –
+                        <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    </small>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${article.comments == null or article.comments.size() == 0}">
+            <p>Комментариев пока нет.</p>
+        </div>
+
+        <!-- Форма добавления комментария для авторизованных пользователей -->
+        <div th:if="${currentUser != null}">
+            <h4>Добавить комментарий</h4>
+            <form th:action="@{/articles/{id}/comments(id=${article.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="mb-3">
+                    <textarea name="body" class="form-control" rows="3" placeholder="Ваш комментарий" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+        </div>
+        <div th:if="${currentUser == null}">
+            <p><em>Для добавления комментариев необходимо <a href="/login">войти в систему</a>.</em></p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
