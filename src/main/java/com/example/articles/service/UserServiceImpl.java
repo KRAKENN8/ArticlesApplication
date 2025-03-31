@@ -59,14 +59,13 @@ public class UserServiceImpl implements UserService {
                     user.setBio(updatedUser.getBio());
                     user.setImageUrl(updatedUser.getImageUrl());
 
-                    // Шифруем пароль, если он был передан
                     if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
                         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-                        String encodedPassword = encoder.encode(updatedUser.getPassword());  // Шифруем новый пароль
-                        user.setPassword(encodedPassword);  // Устанавливаем зашифрованный пароль
+                        String encodedPassword = encoder.encode(updatedUser.getPassword());
+                        user.setPassword(encodedPassword);
                     }
 
-                    return userRepository.save(user);  // Сохраняем обновленного пользователя
+                    return userRepository.save(user);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
     }

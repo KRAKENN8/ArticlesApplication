@@ -44,10 +44,8 @@ public class ArticleServiceImpl implements ArticleService {
                     article.setSlug(updatedArticle.getSlug());
                     article.setBody(updatedArticle.getBody());
                     article.setUpdatedAt(LocalDateTime.now());
-                    // Обновляем ассоциации (владелец и теги)
                     article.setOwner(updatedArticle.getOwner());
                     article.setTags(updatedArticle.getTags());
-                    // НЕ заменяем коллекции комментариев и избранного – оставляем их как есть
                     return articleRepository.save(article);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Article not found with id " + id));
@@ -58,10 +56,9 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.deleteById(id);
     }
 
-    // Исправленный метод для поиска статей по владельцу
     @Override
     public List<Article> getArticlesByOwner(Long ownerId) {
-        return articleRepository.findByOwnerId(ownerId);  // Метод для поиска статей по ownerId
+        return articleRepository.findByOwnerId(ownerId);
     }
 
     @Override

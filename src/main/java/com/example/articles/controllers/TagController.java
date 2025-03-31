@@ -16,28 +16,24 @@ public class TagController {
         this.tagService = tagService;
     }
 
-    // Отображение списка тегов
     @GetMapping
     public String listTags(Model model) {
         model.addAttribute("tags", tagService.getAllTags());
         return "tags/list";
     }
 
-    // Отображение формы для создания нового тега
     @GetMapping("/new")
     public String showAddForm(Model model) {
         model.addAttribute("tag", new Tag());
         return "tags/add";
     }
 
-    // Обработка отправки формы создания тега
     @PostMapping
     public String createTag(@ModelAttribute Tag tag) {
         tagService.createTag(tag);
         return "redirect:/tags";
     }
 
-    // Отображение формы для редактирования тега (опционально)
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Tag tag = tagService.getTagById(id);
@@ -45,14 +41,12 @@ public class TagController {
         return "tags/edit";
     }
 
-    // Обработка обновления тега (опционально)
     @PostMapping("/update/{id}")
     public String updateTag(@PathVariable Long id, @ModelAttribute Tag tag) {
         tagService.updateTag(id, tag);
         return "redirect:/tags";
     }
 
-    // Удаление тега (опционально)
     @GetMapping("/delete/{id}")
     public String deleteTag(@PathVariable Long id) {
         tagService.deleteTag(id);

@@ -36,7 +36,6 @@ public class InsertData {
         Faker faker = new Faker(Locale.forLanguageTag("en"));
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        // Создаем админа, если его еще нет
         User adminUser = userRepository.findByUsername("admin");
         if (adminUser == null) {
             adminUser = new User();
@@ -47,8 +46,7 @@ public class InsertData {
             adminUser.setBio("Администратор системы");
             adminUser.setImageUrl("https://static.vecteezy.com/system/resources/thumbnails/019/194/935/small_2x/global-admin-icon-color-outline-vector.jpg");
 
-            // Шифруем пароль
-            String encodedPassword = passwordEncoder.encode("123"); // Замените "123" на свой пароль
+            String encodedPassword = passwordEncoder.encode("123");
             adminUser.setPassword(encodedPassword);
         }
         userRepository.save(adminUser);
@@ -91,11 +89,9 @@ public class InsertData {
             article.setTitle(faker.book().title());
             article.setBody(faker.lorem().paragraph(3));
 
-            // Назначаем владельца
             User randomOwner = users.get(faker.number().numberBetween(0, users.size()));
             article.setOwner(randomOwner);
 
-            // Назначаем теги
             Set<Tag> articleTags = new HashSet<>();
             int numTags = faker.number().numberBetween(1, 3);
             for (int j = 0; j < numTags; j++) {

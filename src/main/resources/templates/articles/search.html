@@ -29,7 +29,6 @@
   </div>
 </nav>
 
-<!-- Поиск статей -->
 <div class="container mt-5">
   <h2 class="text-center mb-4">Поиск статей</h2>
   <form th:action="@{/articles/search}" method="get">
@@ -47,15 +46,12 @@
     </div>
 
     <div th:if="${!#lists.isEmpty(articles)}">
-      <!-- Сетка с карточками -->
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <!-- Каждая статья отображается в виде карточки -->
         <div th:each="article : ${articles}" class="col">
           <div class="card h-100">
             <div class="card-body">
               <h5 class="card-title" th:text="${article.title}">Заголовок</h5>
-              <!-- Заменили на владельца -->
-              <h6 class="card-subtitle mb-2 text-muted" th:text="${article.owner.username}">Владелец</h6>
+              <h6 class="card-subtitle mb-2 text-muted" th:text="${article.author.name}">Автор</h6>
               <p class="card-text" th:text="${article.description}">Описание</p>
             </div>
             <div class="card-footer">
@@ -68,13 +64,11 @@
               <small class="text-muted" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
               <div class="mt-2">
                 <a th:href="@{/articles/{id}(id=${article.id})}" class="btn btn-info btn-sm">Детали</a>
-                <!-- Кнопки редактирования/удаления отображаются, если currentUser не null и
-                     либо является владельцем статьи, либо имеет роль ADMIN -->
                 <span th:if="${currentUser != null and ((article.owner != null and article.owner.username == currentUser.username) or (currentUser.role.toString() == 'ADMIN_ROLE'))}">
-                            <a th:href="@{/articles/edit/{id}(id=${article.id})}" class="btn btn-warning btn-sm">Редактировать</a>
-                            <a th:href="@{/articles/delete/{id}(id=${article.id})}" class="btn btn-danger btn-sm"
-                               onclick="return confirm('Вы уверены, что хотите удалить статью?')">Удалить</a>
-                        </span>
+                    <a th:href="@{/articles/edit/{id}(id=${article.id})}" class="btn btn-warning btn-sm">Редактировать</a>
+                    <a th:href="@{/articles/delete/{id}(id=${article.id})}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Вы уверены, что хотите удалить статью?')">Удалить</a>
+                </span>
               </div>
             </div>
           </div>

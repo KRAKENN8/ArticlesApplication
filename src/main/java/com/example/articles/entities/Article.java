@@ -31,7 +31,6 @@ public class Article {
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
 
-    // Удалено одно поле tags
     @ManyToMany
     @JoinTable(
             name = "article_tag",
@@ -45,8 +44,6 @@ public class Article {
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleFavorite> favorites = new ArrayList<>();
-
-    // Getters / Setters
 
     public Long getId() {
         return id;

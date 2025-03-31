@@ -30,7 +30,6 @@ public class RegistrationController {
         if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             user.setEmail(user.getUsername() + "@example.com");
         }
-        // Задаём роль пользователя, дату создания и, при необходимости, другие поля
         user.setRole(User.Roles.USER_ROLE);
         user.setCreatedAt(LocalDateTime.now());
         if (user.getImageUrl() == null || user.getImageUrl().trim().isEmpty()) {

@@ -18,7 +18,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/articles">Статьи</a>
                 </li>
-                <!-- Вкладка "Пользователи" только для администраторов -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link" href="/users">Пользователи</a>
                 </li>
@@ -27,7 +26,6 @@
                 </li>
             </ul>
 
-            <!-- Кнопка для авторизованных и неавторизованных пользователей -->
             <div class="d-flex">
                 <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
                     <button type="submit" class="btn btn-outline-danger">Выйти</button>
@@ -57,11 +55,8 @@
                 <textarea id="body" name="body" class="form-control" rows="5" required></textarea>
             </div>
 
-            <!-- Убираем выбор автора, так как автором будет текущий пользователь -->
-            <!-- Владелец будет автоматически назначен текущим пользователем при создании статьи -->
             <input type="hidden" name="ownerId" th:value="${currentUser.id}" />
 
-            <!-- Блок выбора тегов в виде чекбоксов -->
             <div class="mb-3">
                 <label class="form-label">Теги:</label>
                 <div th:each="tag : ${tags}">

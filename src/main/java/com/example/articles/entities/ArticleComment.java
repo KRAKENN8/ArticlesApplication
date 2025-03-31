@@ -25,8 +25,6 @@ public class ArticleComment {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    // Getters / Setters
-
     public Long getId() {
         return id;
     }

@@ -18,7 +18,6 @@
         <li class="nav-item">
           <a class="nav-link" href="/articles">Статьи</a>
         </li>
-        <!-- Вкладка "Пользователи" только для администраторов -->
         <li class="nav-item" sec:authorize="hasRole('ADMIN')">
           <a class="nav-link" href="/users">Пользователи</a>
         </li>
@@ -55,7 +54,6 @@
         <textarea id="body" name="body" class="form-control" rows="5" required th:text="${article.body}"></textarea>
       </div>
 
-      <!-- Заменяем выбор автора на владельца -->
       <div class="mb-3">
         <label for="owner" class="form-label">Владелец:</label>
         <select id="owner" name="ownerId" class="form-select" disabled>
@@ -64,7 +62,6 @@
         <small class="form-text text-muted">Вы не можете изменить владельца статьи.</small>
       </div>
 
-      <!-- Блок выбора тегов в виде чекбоксов -->
       <div class="mb-3">
         <label class="form-label">Теги:</label>
         <div th:each="tag : ${tags}">

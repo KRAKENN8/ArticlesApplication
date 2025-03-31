@@ -26,11 +26,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/login"))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Разрешаем GET-запросы к "/articles" и всем подпутям
                         .requestMatchers(HttpMethod.GET, "/articles", "/articles/**").permitAll()
-                        // Разрешаем доступ к страницам логина, регистрации и статическим ресурсам
                         .requestMatchers("/login", "/registration", "/css/**", "/js/**", "/images/**").permitAll()
-                        // Все остальные запросы требуют аутентификации
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -46,7 +43,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Используем BCryptPasswordEncoder для безопасного шифрования паролей
         return new BCryptPasswordEncoder();
     }
 

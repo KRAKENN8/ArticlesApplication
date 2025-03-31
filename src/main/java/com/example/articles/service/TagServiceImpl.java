@@ -32,7 +32,6 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag createTag(Tag tag) {
-        // При создании устанавливаем текущую дату
         tag.setCreatedAt(LocalDateTime.now());
         return tagRepository.save(tag);
     }
@@ -42,7 +41,6 @@ public class TagServiceImpl implements TagService {
         return tagRepository.findById(id)
                 .map(existingTag -> {
                     existingTag.setName(tag.getName());
-                    // Если нужно обновлять и дату создания/обновления, добавьте соответствующие поля
                     return tagRepository.save(existingTag);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Тег не найден"));

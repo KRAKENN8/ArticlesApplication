@@ -16,16 +16,13 @@ public class Tag {
     private LocalDateTime createdAt;
     private String name;
 
-    // Связь с статьями через таблицу-связку
     @ManyToMany
     @JoinTable(
-            name = "article_tag",  // Название таблицы-связки
-            joinColumns = @JoinColumn(name = "tag_id"),  // Колонка для тега
-            inverseJoinColumns = @JoinColumn(name = "article_id")  // Колонка для статьи
+            name = "article_tag",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "article_id")
     )
     private Set<Article> articles = new HashSet<>();
-
-    // Getters / Setters
 
     public Long getId() {
         return id;

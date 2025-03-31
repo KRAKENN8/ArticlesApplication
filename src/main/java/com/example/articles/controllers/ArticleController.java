@@ -44,13 +44,13 @@ public class ArticleController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
-            model.addAttribute("currentUser", null);  // Это может вызвать ошибку, если в шаблоне требуется "currentUser".
+            model.addAttribute("currentUser", null);
         } else {
             User currentUser = userRepository.findByUsername(auth.getName());
             model.addAttribute("currentUser", currentUser);
         }
 
-        return "articles/list";  // Проверить, существует ли данный шаблон в resources/templates/articles/list.html
+        return "articles/list";
     }
 
     // Отображение деталей статьи
@@ -60,7 +60,6 @@ public class ArticleController {
                 .orElseThrow(() -> new IllegalArgumentException("Article not found with id " + id));
         model.addAttribute("article", article);
 
-        // Добавляем текущего пользователя (или null, если гость)
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
@@ -71,7 +70,6 @@ public class ArticleController {
         return "articles/details";
     }
 
-    // Форма для создания новой статьи
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -86,13 +84,11 @@ public class ArticleController {
     @PostMapping
     public String createArticle(@ModelAttribute("article") Article article,
                                 @RequestParam("tagIds") List<Long> tagIds) {
-        // Устанавливаем текущего пользователя как владельца
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User currentUser = userRepository.findByUsername(username);
         article.setOwner(currentUser);
 
-        // Теги и другие поля
         Set<Tag> tags = new HashSet<>();
         for (Long tagId : tagIds) {
             Tag tag = tagService.getTagById(tagId);
@@ -109,7 +105,6 @@ public class ArticleController {
         Article article = articleService.getArticleById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Article not found with id " + id));
 
-        // Проверяем, имеет ли текущий пользователь право редактировать статью
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User currentUser = userRepository.findByUsername(username);
@@ -127,7 +122,6 @@ public class ArticleController {
     public String updateArticle(@PathVariable Long id,
                                 @ModelAttribute("article") Article updatedArticle,
                                 @RequestParam("tagIds") List<Long> tagIds) {
-        // Получаем существующую статью для проверки прав
         Article existingArticle = articleService.getArticleById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Article not found with id " + id));
 
@@ -140,7 +134,6 @@ public class ArticleController {
             return "redirect:/access-denied";
         }
 
-        // Устанавливаем теги
         Set<Tag> tags = new HashSet<>();
         for (Long tagId : tagIds) {
             Tag tag = tagService.getTagById(tagId);
@@ -148,16 +141,12 @@ public class ArticleController {
         }
         updatedArticle.setTags(tags);
 
-        // Сохраняем владельца из существующей статьи, чтобы не перезаписывать его
         updatedArticle.setOwner(existingArticle.getOwner());
 
-        // В сервисном слое обновляем только скалярные поля и ассоциации, оставляя коллекции (comments, favorites) неизменными
         articleService.updateArticle(id, updatedArticle);
         return "redirect:/articles";
     }
 
-
-    // Удаление статьи
     @GetMapping("/delete/{id}")
     public String deleteArticle(@PathVariable Long id) {
         Article article = articleService.getArticleById(id)
@@ -177,18 +166,15 @@ public class ArticleController {
 
     @PostMapping("/{id}/comments")
     public String addComment(@PathVariable Long id, @RequestParam("body") String body) {
-        // Получаем статью по id
         Article article = articleService.getArticleById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Article not found with id " + id));
 
-        // Получаем текущего пользователя
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             return "redirect:/login";
         }
         User currentUser = userRepository.findByUsername(auth.getName());
 
-        // Создаем новый комментарий
         ArticleComment comment = new ArticleComment();
         comment.setBody(body);
         comment.setArticle(article);
@@ -198,28 +184,14 @@ public class ArticleController {
 
         articleCommentRepository.save(comment);
 
-        // При необходимости можно обновить коллекцию комментариев статьи,
-        // но если связь настроена с cascade, то комментарий будет автоматически подхвачен
         return "redirect:/articles/" + id;
     }
 
     @GetMapping("/search")
     public String searchArticles(@RequestParam("query") String query, Model model) {
         List<Article> articles = articleService.searchArticles(query);
-        List<Tag> tags = tagService.getAllTags();  // Получаем все теги
+        List<Tag> tags = tagService.getAllTags();
 
-        model.addAttribute("articles", articles);
-        model.addAttribute("tags", tags);  // Передаем теги в шаблон
-        model.addAttribute("searchQuery", query);  // Передаем запрос в шаблон
-        return "articles/list";  // Перенаправляем на страницу списка статей
-    }
-
-    @GetMapping("/by-owner/{ownerId}")
-    public String getArticlesByOwner(@PathVariable Long ownerId, Model model) {
-        List<Article> articles = articleService.getArticlesByOwner(ownerId);
-        model.addAttribute("articles", articles);
-
-        // Добавляем текущего пользователя в модель
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
@@ -227,7 +199,26 @@ public class ArticleController {
         }
         model.addAttribute("currentUser", currentUser);
 
-        return "articles/list"; // Этот шаблон будет отображать список статей
+        model.addAttribute("articles", articles);
+        model.addAttribute("tags", tags);
+        model.addAttribute("searchQuery", query);
+
+        return "articles/list";
+    }
+
+    @GetMapping("/by-owner/{ownerId}")
+    public String getArticlesByOwner(@PathVariable Long ownerId, Model model) {
+        List<Article> articles = articleService.getArticlesByOwner(ownerId);
+        model.addAttribute("articles", articles);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = null;
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            currentUser = userRepository.findByUsername(auth.getName());
+        }
+        model.addAttribute("currentUser", currentUser);
+
+        return "articles/list";
     }
 
     @GetMapping("/by-tag/{tagId}")
@@ -235,7 +226,6 @@ public class ArticleController {
         List<Article> articles = articleService.getArticlesByTag(tagId);
         model.addAttribute("articles", articles);
 
-        // Добавляем текущего пользователя в модель
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {

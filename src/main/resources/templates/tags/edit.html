@@ -19,7 +19,6 @@
         <li class="nav-item">
           <a class="nav-link" href="/articles">Статьи</a>
         </li>
-        <!-- Вкладка "Пользователи" только для администраторов -->
         <li class="nav-item" sec:authorize="hasRole('ADMIN')">
           <a class="nav-link" href="/users">Пользователи</a>
         </li>
