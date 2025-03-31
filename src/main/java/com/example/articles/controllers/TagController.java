@@ -20,14 +20,14 @@ public class TagController {
     @GetMapping
     public String listTags(Model model) {
         model.addAttribute("tags", tagService.getAllTags());
-        return "tags/list"; // Файл: src/main/resources/templates/tags/list.html
+        return "tags/list";
     }
 
     // Отображение формы для создания нового тега
     @GetMapping("/new")
     public String showAddForm(Model model) {
         model.addAttribute("tag", new Tag());
-        return "tags/add"; // Файл: src/main/resources/templates/tags/add.html
+        return "tags/add";
     }
 
     // Обработка отправки формы создания тега
@@ -42,7 +42,7 @@ public class TagController {
     public String showEditForm(@PathVariable Long id, Model model) {
         Tag tag = tagService.getTagById(id);
         model.addAttribute("tag", tag);
-        return "tags/edit"; // Если понадобится создать шаблон для редактирования
+        return "tags/edit";
     }
 
     // Обработка обновления тега (опционально)

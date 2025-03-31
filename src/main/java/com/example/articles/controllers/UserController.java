@@ -26,14 +26,14 @@ public class UserController {
     public String getAllUser(Model model) {
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
-        return "users/list";  // Файл: src/main/resources/templates/users/list.html
+        return "users/list";
     }
 
     // Отображение формы для создания нового пользователя
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("user", new User());
-        return "users/add";  // Файл: src/main/resources/templates/users/add.html
+        return "users/add";
     }
 
     // Обработка отправки формы создания пользователя
@@ -48,7 +48,7 @@ public class UserController {
     public String showUpdateForm(@PathVariable Long id, Model model) {
         Optional<User> user = userService.getUserById(id);
         user.ifPresent(value -> model.addAttribute("user", value));
-        return "users/edit";  // Файл: src/main/resources/templates/users/edit.html
+        return "users/edit";
     }
 
     // Обработка обновления пользователя

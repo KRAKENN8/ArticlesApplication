@@ -211,11 +211,34 @@ public class ArticleController {
         comment.setCreatedAt(LocalDateTime.now().withSecond(0).withNano(0));
         comment.setUpdatedAt(LocalDateTime.now().withSecond(0).withNano(0));
 
-        // Сохраняем комментарий
         articleCommentRepository.save(comment);
 
         // При необходимости можно обновить коллекцию комментариев статьи,
         // но если связь настроена с cascade, то комментарий будет автоматически подхвачен
         return "redirect:/articles/" + id;
+    }
+
+    @GetMapping("/search")
+    public String searchArticles(@RequestParam("query") String query, Model model) {
+        List<Article> articles = articleService.searchArticles(query);
+        model.addAttribute("articles", articles);
+        model.addAttribute("searchQuery", query);  // добавим запрос для отображения на странице
+        return "articles/search";  // Возвращаем шаблон для отображения результатов поиска
+    }
+
+    // Показать статьи по автору
+    @GetMapping("/by-author/{authorId}")
+    public String getArticlesByAuthor(@PathVariable Long authorId, Model model) {
+        List<Article> articles = articleService.getArticlesByAuthor(authorId);
+        model.addAttribute("articles", articles);
+        return "articles/list"; // Этот шаблон будет отображать список статей
+    }
+
+    // Показать статьи по тегу
+    @GetMapping("/by-tag/{tagId}")
+    public String getArticlesByTag(@PathVariable Long tagId, Model model) {
+        List<Article> articles = articleService.getArticlesByTag(tagId);
+        model.addAttribute("articles", articles);
+        return "articles/list"; // Этот шаблон будет отображать список статей
     }
 }

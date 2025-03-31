@@ -14,4 +14,5 @@ public interface ArticleService {
     List<Article> getArticlesByAuthor(Long authorId);
     List<Article> getArticlesByTag(Long tagId);
     List<Article> searchArticles(String query);
+
 }

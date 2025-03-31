@@ -11,4 +11,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     // Поиск статей по тегу по id
     List<Article> findByTags_Id(Long tagId);
     void deleteByOwnerId(Long ownerId);
+    List<Article> findByTitleContainingIgnoreCaseOrBodyContainingIgnoreCase(String title, String body);
 }

@@ -70,8 +70,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> searchArticles(String query) {
-        // Реализуйте поиск по необходимости
-        return null;
+        return articleRepository.findByTitleContainingIgnoreCaseOrBodyContainingIgnoreCase(query, query);
     }
 
     @Override
