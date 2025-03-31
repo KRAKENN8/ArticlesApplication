@@ -58,6 +58,7 @@ public class UserController {
         return "redirect:/users";
     }
 
+
     // Удаление пользователя
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {

@@ -37,6 +37,9 @@
   <div class="card shadow p-4">
     <h2 class="text-center mb-4">Редактировать статью</h2>
     <form th:action="@{'/articles/update/' + ${article.id}}" method="post">
+      <!-- Скрытое поле для имитации PUT запроса -->
+      <input type="hidden" name="_method" value="put" />
+
       <div class="mb-3">
         <label for="title" class="form-label">Заголовок:</label>
         <input type="text" id="title" name="title" th:value="${article.title}" class="form-control" required>
@@ -84,6 +87,7 @@
     </div>
   </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
