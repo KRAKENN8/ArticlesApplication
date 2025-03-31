@@ -41,7 +41,6 @@ public class ArticleController {
         this.articleCommentRepository = articleCommentRepository;
     }
 
-    // Вывод списка статей
     @GetMapping
     public String listArticles(Model model) {
         List<Article> articles = articleService.getAllArticles();
@@ -147,7 +146,7 @@ public class ArticleController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User currentUser = userRepository.findByUsername(username);
-        
+
         if (!currentUser.getRole().equals(User.Roles.ADMIN_ROLE) &&
                 (existingArticle.getOwner() == null || !existingArticle.getOwner().getId().equals(currentUser.getId()))) {
             return "redirect:/access-denied";

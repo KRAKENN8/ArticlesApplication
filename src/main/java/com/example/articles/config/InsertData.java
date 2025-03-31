@@ -75,7 +75,6 @@ public class InsertData {
             user.setUsername(faker.name().username());
             user.setImageUrl("https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg");
 
-            // Шифруем пароли для обычных пользователей
             String encodedPassword = passwordEncoder.encode(faker.internet().password());
             user.setPassword(encodedPassword);
 

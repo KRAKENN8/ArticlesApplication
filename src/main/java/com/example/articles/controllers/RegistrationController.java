@@ -22,12 +22,11 @@ public class RegistrationController {
 
     @GetMapping("/registration")
     public String showRegistrationForm() {
-        return "registration";  // Шаблон: src/main/resources/templates/registration.html
+        return "registration";
     }
 
     @PostMapping("/registration")
     public String registerUser(@ModelAttribute User user) {
-        // Если email не указан, задаём его по умолчанию
         if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             user.setEmail(user.getUsername() + "@example.com");
         }
@@ -35,13 +34,12 @@ public class RegistrationController {
         user.setRole(User.Roles.USER_ROLE);
         user.setCreatedAt(LocalDateTime.now());
         if (user.getImageUrl() == null || user.getImageUrl().trim().isEmpty()) {
-            user.setImageUrl("https://via.placeholder.com/150");
+            user.setImageUrl("https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg");
         }
         if (user.getBio() == null) {
             user.setBio("");
         }
-        // Вызываем сервис для сохранения пользователя
         userService.createUser(user);
-        return "redirect:/login";  // Перенаправление на страницу логина после успешной регистрации
+        return "redirect:/login";
     }
 }
